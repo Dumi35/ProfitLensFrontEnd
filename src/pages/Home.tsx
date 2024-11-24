@@ -7,9 +7,22 @@ import appsIcon from "../assets/icons/apps.svg"
 import graph from "../assets/images/graph.svg"
 import logo from "../assets/images/logo.png"
 import brandmarkLogo from "../assets/images/brandmarkLogo.png"
+import AuthenticationForms from "../components/auth/AuthenticationForms";
+import { useState } from "react";
 
 export default function HomePage() {
     const theme = useTheme()
+    const [openAuthForm, setOpenAuthForm] = useState(false)
+    const [formToOpen, setFormToOpen] = useState(0)
+   
+    const handleCloseAuthForm = () => setOpenAuthForm(false);
+
+
+    const handleOpenAuthForm = (formType: number) => {
+        setFormToOpen(formType); 
+        setOpenAuthForm(true); // Open the dialog
+    };
+    
     return (
         <>
             <Box component="header" paddingBlock="1vh">
@@ -17,10 +30,10 @@ export default function HomePage() {
                     <Box component={"img"} src={logo} width="250px" loading="eager" display={{ xs: "none", md: "block" }} />
                     <Box component={"img"} src={brandmarkLogo} loading="eager" display={{ xs: "block", md: "none" }} />
                     <Stack direction={"row"} gap={1}>
-                        <Button variant="contained">
+                        <Button variant="contained" onClick={() => handleOpenAuthForm(0)}>
                             Login
                         </Button>
-                        <Button sx={{display:{ xs: "none", md: "block" }}} >
+                        <Button sx={{ display: { xs: "none", md: "block" } }} onClick={() => handleOpenAuthForm(1)} >
                             Sign up
                         </Button>
                     </Stack>
@@ -34,11 +47,11 @@ export default function HomePage() {
                     <Typography variant="body1">
                         Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum totam sunt vel laudantium nobis velit, aut ducimus esse ea deleniti consequatur quibusdam consectetur modi atque quasi nemo tenetur quia aliquid.
                     </Typography>
-                    <Button variant="contained">
+                    <Button variant="contained"  onClick={() => handleOpenAuthForm(0)}>
                         Get started
                     </Button>
                 </Stack>
-                <Stack flexBasis="300px" flexGrow={1} alignItems={{xs:"center",md:"end"}} paddingInline={"2rem"}>
+                <Stack flexBasis="300px" flexGrow={1} alignItems={{ xs: "center", md: "end" }} paddingInline={"2rem"}>
                     <Box sx={{ width: "230px", height: "350px", borderWidth: "2px", borderStyle: "solid", borderRadius: "400px", boxShadow: `10px 4px 4px ${theme.palette.secondary.main}` }} borderColor={theme.palette.primary.main} position="relative" >
 
                         <Button variant="contained" sx={{ position: "absolute", bottom: "30%", left: "-30%", display: "flex", gap: "1rem", textAlign: "left" }}>
@@ -108,7 +121,7 @@ export default function HomePage() {
                 sx={{ paddingBlock: "2rem", paddingInline: "max(5vw, 1rem)" }} direction="row" flexWrap={"wrap"}
                 justifyContent={"center"} alignItems={"center"}
             >
-                <Stack gap={1} flexBasis={"700px"} flexGrow={1}>
+                <Stack gap={1} flexBasis={"450px"} flexGrow={1}>
                     <Typography variant="h3" color="primary.contrastText">
                         Unlock the Power of Predictive Insights
                     </Typography>
@@ -141,6 +154,8 @@ export default function HomePage() {
                 </Stack>
                 <Box component={"img"} src={graph} width={"250px"} display={{ xs: "none", md: "block" }} loading="lazy" alt="graph" />
             </Stack>
+
+            <AuthenticationForms open={openAuthForm} onClose={handleCloseAuthForm} value={formToOpen} />
         </>
     )
 }

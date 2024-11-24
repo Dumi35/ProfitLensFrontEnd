@@ -90,13 +90,28 @@ let theme: Theme = createTheme({
                     borderRadius: radiusSm,
                     display: 'flex',
                     flexDirection: 'column',
-                    gap:15,
-                    maxWidth: 200, 
-                    height: 230, 
-                    alignItems: "center", 
-                    justifyContent: "center", 
+                    gap: 15,
+                    maxWidth: 200,
+                    height: 230,
+                    alignItems: "center",
+                    justifyContent: "center",
                     textAlign: "center",
-                    paddingBlock:1
+                    paddingBlock: 1
+                }
+            }
+        },
+        MuiDialog: {
+            styleOverrides: {
+                paper: {
+                    borderRadius: radiusSm,
+                    border: `2px solid ${accentDark}`
+                }
+            }
+        },
+        MuiOutlinedInput:{
+            styleOverrides:{
+                root:{
+                    borderRadius: radiusSm,
                 }
             }
         }
@@ -107,8 +122,13 @@ let theme: Theme = createTheme({
             fontFamily: 'NexaBold',
             color: green500
         },
-        h3:{
-            fontFamily: 'NexaBold'
+        h3: {
+            fontFamily: 'NexaBold',
+            fontSize:"clamp(30px, 1.5rem + 2vw, 50px)"
+        },
+        h4: {
+            fontFamily: 'NexaBold',
+            color: green500
         },
         subtitle1: {
             fontFamily: 'NexaBold',
