@@ -1,6 +1,7 @@
 import { createTheme, Theme } from "@mui/material"
-// import '@fontsource/outfit';
+import '@fontsource/outfit';
 import NexaLight from '../assets/fonts/NexaLight.ttf';
+import NexaBold from '../assets/fonts/NexaBold.ttf';
 
 const green500 = "#00370d"
 const green400 = "#2c5d30"
@@ -18,6 +19,11 @@ const accentDark = "#111113"
 
 const lemon = '#c7f35e'
 
+// border radii
+const radiusSm = "30px"
+const radiusMd = "70px"
+const radiusLg = "400px"
+
 let theme: Theme = createTheme({
     palette: {
         primary: {
@@ -26,7 +32,7 @@ let theme: Theme = createTheme({
             300: green300,
             200: green200,
             100: green100,
-            contrastText: "#f3fcf2",
+            contrastText: accentLight,
         },
         secondary: {
             main: yellow500, //yellow
@@ -36,26 +42,76 @@ let theme: Theme = createTheme({
             100: grey100,
             200: grey200
         },
-        background:{
-            default: accentLight
+        background: {
+            default: accentLight,
+            paper: accentLight
         }
     },
     components: {
         MuiCssBaseline: {
-            styleOverrides: {
-                '@font-face': {
-                    fontFamily: 'NexaLight',
-                    fontStyle: 'normal',
-                    fontWeight: 400,
-                    src: `url(${NexaLight}) format('truetype')`,
+            styleOverrides: `
+                @font-face {
+                font-family: 'NexaLight';
+                font-style: normal;
+                font-weight: 400;
+                src: url(${NexaLight}) format('truetype');
                 }
+                @font-face {
+                font-family: 'NexaBold';
+                font-style: normal;
+                src: url(${NexaBold}) format('truetype');
+                }
+      `,
+        },
+        MuiButton: {
+            styleOverrides: {
+                root: {
+                    textTransform: "capitalize",
+                    borderRadius: radiusSm,
+                    width: "fit-content",
+                    minWidth: "130px",
+                    paddingInline: "15px",
+                    fontFamily: "NexaBold"
+                },
+                containedPrimary: {
+                    backgroundColor: yellow500,
+                    color: green500
+                },
+                containedSecondary: {
+                    backgroundColor: green500,
+                    color: accentLight
+                },
             },
         },
+        MuiCard: {
+            styleOverrides: {
+                root: {
+                    border: `2px solid ${accentDark}`,
+                    borderRadius: radiusSm,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap:15,
+                    maxWidth: 200, 
+                    height: 230, 
+                    alignItems: "center", 
+                    justifyContent: "center", 
+                    textAlign: "center",
+                    paddingBlock:1
+                }
+            }
+        }
     },
     typography: {
-        fontFamily: 'NexaLight, Outfit',
-        h1: {
-            fontFamily: 'NexaLight',
+        fontFamily: 'NexaLight, Outfit, NexaBold',
+        h2: {
+            fontFamily: 'NexaBold',
+            color: green500
+        },
+        h3:{
+            fontFamily: 'NexaBold'
+        },
+        subtitle1: {
+            fontFamily: 'NexaBold',
             color: green500
         },
         body1: {
