@@ -1,5 +1,5 @@
 interface LanguageModel {
-    create(options?: { monitor: (m: any) => void, systemPrompt: string }): Promise<any>;
+    create(options?: { monitor: (m: any) => void, systemPrompt?: string }): Promise<any>;
     capabilities(): Promise<{ available: 'no' | 'readily' | 'after-download'; defaultTopK: number; maxTopK: number; defaultTemperature: number }>;
     prompt: (message: string) => Promise<string>;
 }
@@ -14,7 +14,7 @@ declare global {
     }
 }
 
-export default async function AIPrompt() {
+export default async function AIPrompt(promptMessage:string) {
 
     if (!self.ai || !self.ai.languageModel) {
         console.error("chrome.ai.languageModel is not available");
@@ -37,12 +37,12 @@ export default async function AIPrompt() {
                     console.log(`Downloaded ${e.loaded} of ${e.total} bytes.`);
                 });
             },
-            systemPrompt: "Pretend to be an eloquent hamster."
+            // systemPrompt: "Pretend to be an eloquent hamster."
         });
 
         console.log('model is ready to be used', session)
 
-        const stream = await session.prompt('Do you like nuts?')
+        const stream = await session.prompt(promptMessage)
         console.log(stream)
 
     } catch (error) {

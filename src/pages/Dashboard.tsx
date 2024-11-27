@@ -3,6 +3,13 @@ import { BarChart } from "@mui/x-charts";
 import UserDrawer, { DRAWERWIDTH } from "@profitlens/components/user/drawer";
 // import LangDetect from "@profitlens/utilities/LangDetect";
 import AIPrompt from "@profitlens/utilities/AIPrompt.ts";
+import { useEffect, useRef, useState } from "react";
+
+interface Message {
+    id: number;
+    sender: 'user' | 'profitLensBot';
+    text: string;
+}
 
 function SendIconComponent() {
     return (
@@ -14,22 +21,38 @@ function SendIconComponent() {
 
 export default function Dashboard() {
 
-    function detectLanguage(event: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement>) {
-        if ('key' in event && event?.key === 'Enter') {
-            event.preventDefault();
-            const inputValue = (event.target as HTMLInputElement).value;
-            console.log('Input value:', inputValue);
-            // LangDetect(inputValue)
-            // AIPrompt()
-            // Call your language detection logic here
-        } else if ('button' in event) {
-            // const inputValue = (event.target as HTMLInputElement).value;
-            // console.log('Input value:', inputValue);
-            console.log('Input value:', 'ji');
-            // LangDetect(inputValue)
-            // Call your language detection logic here
-        }
+    const promptInputRef = useRef<HTMLInputElement | null>(null);
+    const promptFormRef = useRef<HTMLFormElement | null>(null);
+
+    const [messages, setMessages] = useState<Message[]>([]);
+
+    function detectLanguage(event: React.FormEvent<HTMLFormElement>) {
+
+        event.preventDefault()
+        const formData = new FormData(event.currentTarget as HTMLFormElement);
+        const formJson = Object.fromEntries(formData.entries());
+        //send the message to the prompt api
+        AIPrompt(formJson['prompt-message'].toString())
+        promptFormRef.current?.reset()
+
     }
+
+    useEffect(() => {
+        const listener = (event: KeyboardEvent) => {
+            if (event.key === "Enter" || event.key === "NumpadEnter") {
+    
+                const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+                promptFormRef.current?.dispatchEvent(submitEvent);
+                
+                event.preventDefault();
+            }
+        };
+
+        promptInputRef.current?.addEventListener("keydown", listener);
+        return () => {
+            promptInputRef.current?.removeEventListener("keydown", listener);
+        };
+    }, []);
 
     return (
         <Box display={"flex"}>
@@ -85,23 +108,28 @@ export default function Dashboard() {
                 ml: { md: `${DRAWERWIDTH}px` },
                 paddingBottom: '1rem',
                 backgroundColor: 'background.default'
-            }}>
+            }} component={'form'} onSubmit={((event: React.FormEvent<HTMLFormElement>) => { detectLanguage(event) })} id='prompt-form' ref={promptFormRef}>
 
-                <TextField placeholder="Enter prompt" onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => detectLanguage(event)} fullWidth sx={{
-                    '& .MuiInputBase-root': {
-                        paddingRight: 1,
-                        paddingLeft: 3
-                    },
 
-                }}
-                name='prompt-message'
+                <TextField name='prompt-message'
+                    id='prompt-message'
+                    ref={promptInputRef}
+                    placeholder="Enter prompt" fullWidth sx={{
+
+                        '& .MuiInputBase-root': {
+                            paddingRight: 1,
+                            paddingLeft: 3
+                        },
+
+                    }}
+
                     multiline
                     maxRows={3}
                     slotProps={{
                         input: {
                             endAdornment:
                                 <InputAdornment position="end">
-                                    <IconButton onClick={(event: React.MouseEvent<HTMLButtonElement>) => { detectLanguage(event) }}>
+                                    <IconButton type="submit">
                                         <SendIconComponent />
                                     </IconButton>
                                 </InputAdornment>
