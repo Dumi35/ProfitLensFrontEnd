@@ -1,5 +1,5 @@
 import { createTheme, Theme } from "@mui/material"
-import '@fontsource/outfit';
+import '@fontsource/outfit/400.css';
 import NexaLight from '../assets/fonts/NexaLight.ttf';
 import NexaBold from '../assets/fonts/NexaBold.ttf';
 
@@ -21,8 +21,8 @@ const lemon = '#c7f35e'
 
 // border radii
 const radiusSm = "30px"
-const radiusMd = "70px"
-const radiusLg = "400px"
+// const radiusMd = "70px"
+// const radiusLg = "400px"
 
 let theme: Theme = createTheme({
     palette: {

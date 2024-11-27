@@ -1,7 +1,6 @@
-import { IconButton, InputAdornment, TextField, Typography } from "@mui/material";
-import LangDetect from "@profitlens/utilities/LangDetect";
+import { IconButton, InputAdornment, TextField } from "@mui/material";
+// import LangDetect from "@profitlens/utilities/LangDetect";
 import AIPrompt from "@profitlens/utilities/AIPrompt.ts";
-import SendIcon from "../assets/icons/send-fill.svg"
 
 function SendIconComponent() {
     return (
