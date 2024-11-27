@@ -48,6 +48,23 @@ let theme: Theme = createTheme({
         }
     },
     components: {
+        MuiAppBar: {
+            styleOverrides: {
+                root: {
+                    backgroundColor: accentLight,
+                    color: accentDark,
+                    boxShadow: "none",
+                    borderBottom: '1px solid rgba(0, 0, 0, 0.12)'
+                },
+            },
+        },
+        MuiToolbar: {
+            styleOverrides: {
+                root: {
+                    boxShadow: 'none !important',
+                },
+            },
+        },
         MuiCssBaseline: {
             styleOverrides: `
                 @font-face {
@@ -83,10 +100,17 @@ let theme: Theme = createTheme({
                 },
             },
         },
-        MuiButtonBase:{
-            styleOverrides:{
-                root:{
+        MuiButtonBase: {
+            styleOverrides: {
+                root: {
                     backgroundColor: yellow500,
+                }
+            }
+        },
+        MuiAvatar: {
+            styleOverrides: {
+                root: {
+                    backgroundColor: green500
                 }
             }
         },
@@ -115,10 +139,11 @@ let theme: Theme = createTheme({
                 }
             }
         },
-        MuiOutlinedInput:{
-            styleOverrides:{
-                root:{
+        MuiOutlinedInput: {
+            styleOverrides: {
+                root: {
                     borderRadius: radiusSm,
+                    backgroundColor: accentLight
                 }
             }
         }
@@ -131,7 +156,7 @@ let theme: Theme = createTheme({
         },
         h3: {
             fontFamily: 'NexaBold',
-            fontSize:"clamp(30px, 1.5rem + 2vw, 50px)"
+            fontSize: "clamp(30px, 1.5rem + 2vw, 50px)"
         },
         h4: {
             fontFamily: 'NexaBold',

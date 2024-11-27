@@ -1,4 +1,6 @@
-import { IconButton, InputAdornment, TextField } from "@mui/material";
+import { Box, IconButton, InputAdornment, Stack, TextField, Toolbar, Typography } from "@mui/material";
+import { BarChart } from "@mui/x-charts";
+import UserDrawer, { DRAWERWIDTH } from "@profitlens/components/user/drawer";
 // import LangDetect from "@profitlens/utilities/LangDetect";
 import AIPrompt from "@profitlens/utilities/AIPrompt.ts";
 
@@ -13,12 +15,12 @@ function SendIconComponent() {
 export default function Dashboard() {
 
     function detectLanguage(event: React.KeyboardEvent<HTMLInputElement> | React.MouseEvent<HTMLButtonElement>) {
-        // event.preventDefault();
         if ('key' in event && event?.key === 'Enter') {
+            event.preventDefault();
             const inputValue = (event.target as HTMLInputElement).value;
             console.log('Input value:', inputValue);
             // LangDetect(inputValue)
-            AIPrompt()
+            // AIPrompt()
             // Call your language detection logic here
         } else if ('button' in event) {
             // const inputValue = (event.target as HTMLInputElement).value;
@@ -30,24 +32,87 @@ export default function Dashboard() {
     }
 
     return (
-        <>
-            <TextField placeholder="Enter prompt" onKeyDown={(event:React.KeyboardEvent<HTMLInputElement>) => detectLanguage(event)} fullWidth sx={{
-                '& .MuiInputBase-root':{
-                    paddingRight:1
-                }
+        <Box display={"flex"}>
+            <UserDrawer />
+            <Stack sx={{
+                paddingInline: {
+                    xs: 1,
+                }, gap: "20px", flexDirection: "column", position: "relative",
+                flexGrow: 1, width: { sm: `calc(100% - ${DRAWERWIDTH}px)` }
             }}
-                slotProps={{
-                    input: {
-                        endAdornment:
-                            <InputAdornment position="end">
-                                <IconButton onClick={(event:React.MouseEvent<HTMLButtonElement>) => {detectLanguage(event)}}>
-                                    <SendIconComponent />
-                                </IconButton>
-                            </InputAdornment>
-                    }
-                }}
-            />
+                component="main"
+            >
+                <Toolbar />
+                <Box sx={{ paddingInline: '5%', flexGrow: 1, overflow: 'hidden' }}>
+                    <BarChart
+                        series={[
+                            { data: [35, 44, 24, 34] },
+                            { data: [51, 6, 49, 30] },
+                            { data: [15, 25, 30, 50] },
+                            { data: [60, 50, 15, 25] },
+                        ]}
+                        height={290}
+                        xAxis={[{ data: ['Q1', 'Q2', 'Q3', 'Q4'], scaleType: 'band' }]}
+                        margin={{ top: 10, bottom: 30, left: 40, right: 10 }}
+                    />
+                    <Box>
+                        <Stack flexBasis="500px" flexGrow={1} spacing="1rem">
+                            <Typography variant="subtitle1">Summary</Typography>
+                            <Typography variant="body1">
+                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum totam sunt vel laudantium nobis velit, aut ducimus esse ea deleniti consequatur quibusdam consectetur modi atque quasi nemo tenetur quia aliquid.
+                            </Typography>
+                        </Stack>
+                    </Box>
+                    <Box>
+                        <Stack flexBasis="500px" flexGrow={1} spacing="1rem">
+                            <Typography variant="subtitle1">Gain insights into market with AI</Typography>
+                            <Typography variant="body1">
+                                Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum totam sunt vel laudantium nobis velit, aut ducimus esse ea deleniti consequatur quibusdam consectetur modi atque quasi nemo tenetur quia aliquid.
+                            </Typography>
+                        </Stack>
+                    </Box>
+                </Box>
+                <Toolbar />
+            </Stack>
 
-        </>
+            <Box sx={{
+                position: "fixed",
+                paddingInline: '5%',
+                bottom: 0,
+                left: "auto",
+                right: 0,
+                width: { xs: "100%", md: `calc(100% - ${DRAWERWIDTH}px)` },
+                ml: { md: `${DRAWERWIDTH}px` },
+                paddingBottom: '1rem',
+                backgroundColor: 'background.default'
+            }}>
+
+                <TextField placeholder="Enter prompt" onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => detectLanguage(event)} fullWidth sx={{
+                    '& .MuiInputBase-root': {
+                        paddingRight: 1,
+                        paddingLeft: 3
+                    },
+
+                }}
+                name='prompt-message'
+                    multiline
+                    maxRows={3}
+                    slotProps={{
+                        input: {
+                            endAdornment:
+                                <InputAdornment position="end">
+                                    <IconButton onClick={(event: React.MouseEvent<HTMLButtonElement>) => { detectLanguage(event) }}>
+                                        <SendIconComponent />
+                                    </IconButton>
+                                </InputAdornment>
+                        }
+                    }}
+                />
+            </Box>
+
+
+        </Box>
+
+
     )
 }
