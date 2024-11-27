@@ -71,7 +71,7 @@ let theme: Theme = createTheme({
                     width: "fit-content",
                     minWidth: "130px",
                     paddingInline: "15px",
-                    fontFamily: "NexaBold"
+                    fontFamily: "NexaBold",
                 },
                 containedPrimary: {
                     backgroundColor: yellow500,
@@ -82,6 +82,13 @@ let theme: Theme = createTheme({
                     color: accentLight
                 },
             },
+        },
+        MuiButtonBase:{
+            styleOverrides:{
+                root:{
+                    backgroundColor: yellow500,
+                }
+            }
         },
         MuiCard: {
             styleOverrides: {
