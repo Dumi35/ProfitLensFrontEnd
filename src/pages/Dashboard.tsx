@@ -1,4 +1,4 @@
-import { Box, IconButton, InputAdornment, Stack, TextField, Toolbar, Typography } from "@mui/material";
+import { Box, IconButton, InputAdornment, LinearProgress, Paper, Stack, TextField, Toolbar, Typography } from "@mui/material";
 import { BarChart } from "@mui/x-charts";
 import UserDrawer, { DRAWERWIDTH } from "@profitlens/components/user/drawer";
 // import LangDetect from "@profitlens/utilities/LangDetect";
@@ -6,7 +6,7 @@ import { AISetup, LanguageModel } from "@profitlens/utilities/AIPrompt.ts";
 import { useEffect, useRef, useState } from "react";
 
 interface Message {
-    id: number;
+    id: string;
     sender: 'user' | 'profitLensBot';
     text: string;
 }
@@ -25,20 +25,41 @@ export default function Dashboard() {
     const promptFormRef = useRef<HTMLFormElement | null>(null);
 
     const [messages, setMessages] = useState<Message[]>([]);
+    const [loadingResponse, setLoadingResponse] = useState(false)
 
     let PromptSession: LanguageModel
 
     async function detectLanguage(event: React.FormEvent<HTMLFormElement>) {
         try {
             event.preventDefault()
-          
+            setLoadingResponse(true)
             const formData = new FormData(event.currentTarget as HTMLFormElement);
             const formJson = Object.fromEntries(formData.entries());
-            
-            //send the message to the prompt api
-            console.log(await PromptSession.prompt(formJson['prompt-message'].toString()))
+
+            // const promptMessage = formJson['prompt-message'].toString()
+            const promptMessage: Message = {
+                id: `user-${Date.now()}`,
+                sender: 'user',
+                text: formJson['prompt-message'].toString()
+            }
+
             //reset all form inputs
             promptFormRef.current?.reset()
+            
+            setMessages((prev) => [...prev, promptMessage])
+
+            //send the message to the prompt api
+            const responseMessage: Message = {
+                id: `bot-${Date.now()}`,
+                sender: 'profitLensBot',
+                text: await PromptSession.prompt(promptMessage.text)
+                // text: 'lol'
+            }
+            
+            setLoadingResponse(false)
+            setMessages((prev) => [...prev, responseMessage])
+
+
         } catch (e) {
             console.error(e)
         }
@@ -78,15 +99,13 @@ export default function Dashboard() {
         <Box display={"flex"}>
             <UserDrawer />
             <Stack sx={{
-                paddingInline: {
-                    xs: 1,
-                }, gap: "20px", flexDirection: "column", position: "relative",
+                paddingInline: '4%', gap: "20px", flexDirection: "column", position: "relative",
                 flexGrow: 1, width: { sm: `calc(100% - ${DRAWERWIDTH}px)` }
             }}
                 component="main"
             >
                 <Toolbar />
-                <Box sx={{ paddingInline: '5%', flexGrow: 1, overflow: 'hidden' }}>
+                <Box sx={{ flexGrow: 1, overflow: 'hidden' }}>
                     <BarChart
                         series={[
                             { data: [35, 44, 24, 34] },
@@ -115,6 +134,38 @@ export default function Dashboard() {
                         </Stack>
                     </Box>
                 </Box>
+                {/* messages */}
+                <Box sx={{ overflowY: 'auto' }}>
+                    {messages.map((message) => (
+                        <Box
+                            key={message.id}
+                            sx={{
+                                display: 'flex',
+                                justifyContent: message.sender === 'user' ? 'flex-end' : 'flex-start',
+                                mb: 1,
+                            }}
+                        >
+                            <Paper
+                                elevation={2}
+                                sx={{
+                                    p: 1,
+                                    maxWidth: '75%',
+                                    bgcolor: message.sender === 'user' ? 'primary.100' : 'grey.300',
+                                }}
+                            >
+                                <Typography variant="body1">{message.text}</Typography>
+                            </Paper>
+                        </Box>
+                    ))}
+                </Box>
+                {
+                    loadingResponse &&
+                    <Stack gap={2} width={'75%'}>
+                        <LinearProgress sx={{ width: '100%' }} />
+                        <LinearProgress sx={{ width: '75%' }} />
+                        <LinearProgress sx={{ width: '45%' }} />
+                    </Stack>
+                }
                 <Toolbar />
             </Stack>
 
