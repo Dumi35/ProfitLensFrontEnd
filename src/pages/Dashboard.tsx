@@ -32,6 +32,9 @@ export default function Dashboard() {
     async function detectLanguage(event: React.FormEvent<HTMLFormElement>) {
         try {
             event.preventDefault()
+            if(loadingResponse){
+                return
+            }
             setLoadingResponse(true)
             const formData = new FormData(event.currentTarget as HTMLFormElement);
             const formJson = Object.fromEntries(formData.entries());
@@ -150,7 +153,7 @@ export default function Dashboard() {
                                 sx={{
                                     p: 1,
                                     maxWidth: '75%',
-                                    bgcolor: message.sender === 'user' ? 'primary.100' : 'grey.300',
+                                    bgcolor: message.sender === 'user' ? 'primary.100' : 'grey.100',
                                 }}
                             >
                                 <Typography variant="body1">{message.text}</Typography>
@@ -199,7 +202,7 @@ export default function Dashboard() {
                         input: {
                             endAdornment:
                                 <InputAdornment position="end">
-                                    <IconButton type="submit">
+                                    <IconButton type="submit" disabled={loadingResponse}>
                                         <SendIconComponent />
                                     </IconButton>
                                 </InputAdornment>
