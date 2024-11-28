@@ -2,7 +2,7 @@ import { Box, IconButton, InputAdornment, Stack, TextField, Toolbar, Typography 
 import { BarChart } from "@mui/x-charts";
 import UserDrawer, { DRAWERWIDTH } from "@profitlens/components/user/drawer";
 // import LangDetect from "@profitlens/utilities/LangDetect";
-import AIPrompt from "@profitlens/utilities/AIPrompt.ts";
+import { AISetup, LanguageModel } from "@profitlens/utilities/AIPrompt.ts";
 import { useEffect, useRef, useState } from "react";
 
 interface Message {
@@ -26,18 +26,32 @@ export default function Dashboard() {
 
     const [messages, setMessages] = useState<Message[]>([]);
 
-    function detectLanguage(event: React.FormEvent<HTMLFormElement>) {
+    let PromptSession: LanguageModel
 
-        event.preventDefault()
-        console.log('value', promptInputRef.current)
-        const formData = new FormData(event.currentTarget as HTMLFormElement);
-        const formJson = Object.fromEntries(formData.entries());
-        //send the message to the prompt api
-        AIPrompt(formJson['prompt-message'].toString())
-        promptFormRef.current?.reset()
+    async function detectLanguage(event: React.FormEvent<HTMLFormElement>) {
+        try {
+            event.preventDefault()
+          
+            const formData = new FormData(event.currentTarget as HTMLFormElement);
+            const formJson = Object.fromEntries(formData.entries());
+            
+            //send the message to the prompt api
+            console.log(await PromptSession.prompt(formJson['prompt-message'].toString()))
+            //reset all form inputs
+            promptFormRef.current?.reset()
+        } catch (e) {
+            console.error(e)
+        }
     }
 
     useEffect(() => {
+
+        AISetup().then(async (res: LanguageModel) => {
+            console.log('setup res', res)
+            PromptSession = res
+        }).catch((error: any) => {
+            console.error('setup error', error)
+        })
         const listener = (event: KeyboardEvent) => {
             if (event.key === "Enter" || event.key === "NumpadEnter") {
                 // for medium sized screens e.g tablet and above
@@ -50,7 +64,7 @@ export default function Dashboard() {
                         promptFormRef.current?.dispatchEvent(submitEvent);
                         event.preventDefault();
                     }
-                } 
+                }
             }
         };
 

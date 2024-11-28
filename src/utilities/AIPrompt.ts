@@ -1,11 +1,14 @@
-interface LanguageModel {
-    create(options?: { monitor: (m: any) => void, systemPrompt?: string }): Promise<any>;
+interface LanguageModelFactory {
+    create(options?: { monitor: (m: any) => void, systemPrompt?: string }): Promise<LanguageModel>;
     capabilities(): Promise<{ available: 'no' | 'readily' | 'after-download'; defaultTopK: number; maxTopK: number; defaultTemperature: number }>;
+}
+
+export interface LanguageModel {
     prompt: (message: string) => Promise<string>;
 }
 
 interface ChromeAIOriginTrial {
-    languageModel: LanguageModel;
+    languageModel: LanguageModelFactory;
 }
 
 declare global {
@@ -14,38 +17,31 @@ declare global {
     }
 }
 
-export default async function AIPrompt(promptMessage:string) {
+//write a setup and prompt functions as separate
+export async function AISetup():  Promise<LanguageModel> {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!self.ai || !self.ai.languageModel) {
+                throw new Error("chrome.ai.languageModel is not available")
+            }
+            const availability: 'no' | 'readily' | 'after-download' = (await self.ai.languageModel.capabilities()).available;
 
-    if (!self.ai || !self.ai.languageModel) {
-        console.error("chrome.ai.languageModel is not available");
-        return;
-    }
+            if (availability == 'no') {
+                throw new Error("Prompt API cannot be used at the moment")
+            }
 
-    try {
-        const availability: 'no' | 'readily' | 'after-download' = (await self.ai.languageModel.capabilities()).available;
+            //model needs to be downloaded first if availability is after-download
+            const session = await self.ai.languageModel.create(
+                // systemPrompt: "Pretend to be an eloquent hamster."
+            );
 
-        if (availability == 'no') {
-            console.error('Prompt API cannot be used at the moment')
-            return
+            if (session) {
+                resolve(session)
+            }
+        } catch (error) {
+            console.error(error)
+            reject(error)
         }
 
-        //model needs to be downloaded first if availability is after-download
-        const session = await self.ai.languageModel.create({
-            monitor(m: any) {
-                console.log('monitoring')
-                m.addEventListener("downloadprogress", (e: any) => {
-                    console.log(`Downloaded ${e.loaded} of ${e.total} bytes.`);
-                });
-            },
-            // systemPrompt: "Pretend to be an eloquent hamster."
-        });
-
-        console.log('model is ready to be used', session)
-
-        const stream = await session.prompt(promptMessage)
-        console.log(stream)
-
-    } catch (error) {
-        console.error("An error occurred:", error);
-    }
+    })
 }
