@@ -29,23 +29,28 @@ export default function Dashboard() {
     function detectLanguage(event: React.FormEvent<HTMLFormElement>) {
 
         event.preventDefault()
+        console.log('value', promptInputRef.current)
         const formData = new FormData(event.currentTarget as HTMLFormElement);
         const formJson = Object.fromEntries(formData.entries());
         //send the message to the prompt api
-        // AIPrompt(formJson['prompt-message'].toString())
+        AIPrompt(formJson['prompt-message'].toString())
         promptFormRef.current?.reset()
-
     }
 
     useEffect(() => {
         const listener = (event: KeyboardEvent) => {
-
             if (event.key === "Enter" || event.key === "NumpadEnter") {
-                if (!event.shiftKey) {
-                    const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
-                    promptFormRef.current?.dispatchEvent(submitEvent);
-                    event.preventDefault();
-                }
+                // for medium sized screens e.g tablet and above
+                const isMediumSized = window.matchMedia('(min-width: 900px)').matches;
+
+                if (isMediumSized) {
+                    if (!event.shiftKey) {
+                        // Submit form on Enter for laptop/desktop
+                        const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+                        promptFormRef.current?.dispatchEvent(submitEvent);
+                        event.preventDefault();
+                    }
+                } 
             }
         };
 
@@ -111,31 +116,6 @@ export default function Dashboard() {
                 backgroundColor: 'background.default'
             }} component={'form'} onSubmit={((event: React.FormEvent<HTMLFormElement>) => { detectLanguage(event) })} id='prompt-form' ref={promptFormRef}>
 
-                {/* for mobile phones and smaller screens */}
-                <TextField name='prompt-message'
-                    id='prompt-message'
-                    placeholder="Enter prompt" fullWidth sx={{
-
-                        '& .MuiInputBase-root': {
-                            paddingRight: 1,
-                            paddingLeft: 3
-                        },
-                        display: { md: 'none' }
-                    }}
-
-                    multiline
-                    maxRows={3}
-                    slotProps={{
-                        input: {
-                            endAdornment:
-                                <InputAdornment position="end">
-                                    <IconButton type="submit">
-                                        <SendIconComponent />
-                                    </IconButton>
-                                </InputAdornment>
-                        }
-                    }}
-                />
                 {/* for larger screens */}
                 <TextField name='prompt-message'
                     id='prompt-message'
@@ -145,8 +125,7 @@ export default function Dashboard() {
                         '& .MuiInputBase-root': {
                             paddingRight: 1,
                             paddingLeft: 3
-                        },
-                        display: { xs: 'none', md:"block" }
+                        }
                     }}
 
                     multiline
