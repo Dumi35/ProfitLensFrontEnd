@@ -1,9 +1,9 @@
 import { Box, IconButton, InputAdornment, LinearProgress, Paper, Stack, TextField, Toolbar, Typography } from "@mui/material";
 import { BarChart } from "@mui/x-charts";
 import UserDrawer, { DRAWERWIDTH } from "@profitlens/components/user/drawer";
-// import LangDetect from "@profitlens/utilities/LangDetect";
 import { AISetup, LanguageModel } from "@profitlens/utilities/AIPrompt.ts";
 import { useEffect, useRef, useState } from "react";
+import ReactMarkdown from 'react-markdown';
 
 interface Message {
     id: string;
@@ -27,7 +27,7 @@ export default function Dashboard() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [loadingResponse, setLoadingResponse] = useState(false)
 
-    let PromptSession: LanguageModel
+    const PromptSession = useRef<LanguageModel | undefined>();
 
     async function detectLanguage(event: React.FormEvent<HTMLFormElement>) {
         try {
@@ -55,16 +55,18 @@ export default function Dashboard() {
             const responseMessage: Message = {
                 id: `bot-${Date.now()}`,
                 sender: 'profitLensBot',
-                text: await PromptSession.prompt(promptMessage.text)
+                text: await PromptSession.current?.prompt(promptMessage.text) ?? ''
                 // text: 'lol'
             }
             
             setLoadingResponse(false)
             setMessages((prev) => [...prev, responseMessage])
-
+            console.log('number of tokens', PromptSession)
 
         } catch (e) {
             console.error(e)
+            setLoadingResponse(false) //may place in a finally stmt
+            console.log('error number of tokens', PromptSession)
         }
     }
 
@@ -72,7 +74,7 @@ export default function Dashboard() {
 
         AISetup().then(async (res: LanguageModel) => {
             console.log('setup res', res)
-            PromptSession = res
+            PromptSession.current = res;
         }).catch((error: any) => {
             console.error('setup error', error)
         })
@@ -156,7 +158,11 @@ export default function Dashboard() {
                                     bgcolor: message.sender === 'user' ? 'primary.100' : 'grey.100',
                                 }}
                             >
-                                <Typography variant="body1">{message.text}</Typography>
+                                {
+                                    message.sender === 'user' ? <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>{message.text}</Typography> : <ReactMarkdown>{message.text}</ReactMarkdown>
+                                }
+                                {/* <ReactMarkdown>{message.text}</ReactMarkdown>
+                                <Typography variant="body1">{message.text}</Typography> */}
                             </Paper>
                         </Box>
                     ))}
