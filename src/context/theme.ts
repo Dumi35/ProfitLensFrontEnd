@@ -146,10 +146,17 @@ let theme: Theme = createTheme({
                     backgroundColor: accentLight
                 }
             }
+        },
+        MuiAlert: {
+            styleOverrides: {
+                root: {
+                    fontFamily: 'Outfit'
+                }
+            }
         }
     },
     typography: {
-        fontFamily: 'NexaLight, Outfit, NexaBold',
+        fontFamily: 'NexaBold, NexaLight, Outfit',
         h2: {
             fontFamily: 'NexaBold',
             color: green500

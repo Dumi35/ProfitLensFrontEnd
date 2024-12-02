@@ -1,4 +1,4 @@
-import { Box, IconButton, InputAdornment, LinearProgress, Paper, Stack, TextField, Toolbar, Typography } from "@mui/material";
+import { Box, IconButton, InputAdornment, LinearProgress, Paper, Stack, TextField, Toolbar, Typography, Alert } from "@mui/material";
 import { BarChart } from "@mui/x-charts";
 import UserDrawer, { DRAWERWIDTH } from "@profitlens/components/user/drawer";
 import { PromptAISetup, LanguageModel } from "@profitlens/utilities/AIPrompt.ts";
@@ -28,11 +28,12 @@ export default function Dashboard() {
     const [loadingResponse, setLoadingResponse] = useState(false)
 
     const PromptSession = useRef<LanguageModel | undefined>();
+    const [errorMessage, setErrorMessage] = useState<string>()
 
-    async function detectLanguage(event: React.FormEvent<HTMLFormElement>) {
+    async function promptAI(event: React.FormEvent<HTMLFormElement>) {
         try {
             event.preventDefault()
-            if(loadingResponse){
+            if (loadingResponse || errorMessage != null) {
                 return
             }
             setLoadingResponse(true)
@@ -48,7 +49,7 @@ export default function Dashboard() {
 
             //reset all form inputs
             promptFormRef.current?.reset()
-            
+
             setMessages((prev) => [...prev, promptMessage])
 
             //send the message to the prompt api
@@ -56,17 +57,16 @@ export default function Dashboard() {
                 id: `bot-${Date.now()}`,
                 sender: 'profitLensBot',
                 text: await PromptSession.current?.prompt(promptMessage.text) ?? ''
-                // text: 'lol'
             }
-            
-            setLoadingResponse(false)
             setMessages((prev) => [...prev, responseMessage])
-            console.log('number of tokens', PromptSession)
+            // console.log('number of tokens', PromptSession)
 
         } catch (e) {
             console.error(e)
+            setErrorMessage('PromptAPI is unavailable. Please try again later')
+            // console.log('error number of tokens', PromptSession)
+        } finally{
             setLoadingResponse(false) //may place in a finally stmt
-            console.log('error number of tokens', PromptSession)
         }
     }
 
@@ -76,6 +76,7 @@ export default function Dashboard() {
             console.log('setup res', res)
             PromptSession.current = res;
         }).catch((error: any) => {
+            setErrorMessage('PromptAPI is unavailable. Please try again later')
             console.error('setup error', error)
         })
         const listener = (event: KeyboardEvent) => {
@@ -161,7 +162,7 @@ export default function Dashboard() {
                                 {
                                     message.sender === 'user' ? <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>{message.text}</Typography> : <ReactMarkdown>{message.text}</ReactMarkdown>
                                 }
-                               
+
                             </Paper>
                         </Box>
                     ))}
@@ -173,6 +174,10 @@ export default function Dashboard() {
                         <LinearProgress sx={{ width: '75%' }} />
                         <LinearProgress sx={{ width: '45%' }} />
                     </Stack>
+                }
+                {
+                    errorMessage &&
+                    <Alert severity="error">{errorMessage}</Alert>
                 }
                 <Toolbar />
             </Stack>
@@ -187,9 +192,9 @@ export default function Dashboard() {
                 ml: { md: `${DRAWERWIDTH}px` },
                 paddingBottom: '1rem',
                 backgroundColor: 'background.default'
-            }} component={'form'} onSubmit={((event: React.FormEvent<HTMLFormElement>) => { detectLanguage(event) })} id='prompt-form' ref={promptFormRef}>
+            }} component={'form'} onSubmit={((event: React.FormEvent<HTMLFormElement>) => { promptAI(event) })} id='prompt-form' ref={promptFormRef}>
 
-                {/* for larger screens */}
+
                 <TextField name='prompt-message'
                     id='prompt-message'
                     ref={promptInputRef}
@@ -207,7 +212,7 @@ export default function Dashboard() {
                         input: {
                             endAdornment:
                                 <InputAdornment position="end">
-                                    <IconButton type="submit" disabled={loadingResponse}>
+                                    <IconButton type="submit" disabled={loadingResponse || errorMessage != null}>
                                         <SendIconComponent />
                                     </IconButton>
                                 </InputAdornment>
