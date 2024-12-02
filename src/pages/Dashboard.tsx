@@ -1,7 +1,7 @@
 import { Box, IconButton, InputAdornment, LinearProgress, Paper, Stack, TextField, Toolbar, Typography } from "@mui/material";
 import { BarChart } from "@mui/x-charts";
 import UserDrawer, { DRAWERWIDTH } from "@profitlens/components/user/drawer";
-import { AISetup, LanguageModel } from "@profitlens/utilities/AIPrompt.ts";
+import { PromptAISetup, LanguageModel } from "@profitlens/utilities/AIPrompt.ts";
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from 'react-markdown';
 
@@ -72,7 +72,7 @@ export default function Dashboard() {
 
     useEffect(() => {
 
-        AISetup().then(async (res: LanguageModel) => {
+        PromptAISetup().then(async (res: LanguageModel) => {
             console.log('setup res', res)
             PromptSession.current = res;
         }).catch((error: any) => {
@@ -140,7 +140,7 @@ export default function Dashboard() {
                     </Box>
                 </Box>
                 {/* messages */}
-                <Box sx={{ overflowY: 'auto' }}>
+                <Box>
                     {messages.map((message) => (
                         <Box
                             key={message.id}
@@ -161,8 +161,7 @@ export default function Dashboard() {
                                 {
                                     message.sender === 'user' ? <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>{message.text}</Typography> : <ReactMarkdown>{message.text}</ReactMarkdown>
                                 }
-                                {/* <ReactMarkdown>{message.text}</ReactMarkdown>
-                                <Typography variant="body1">{message.text}</Typography> */}
+                               
                             </Paper>
                         </Box>
                     ))}
