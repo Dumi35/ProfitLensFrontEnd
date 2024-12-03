@@ -20,7 +20,12 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+
+    "baseUrl": "./", // Base directory for module resolution
+    "paths": {
+      "@profitlens/*": ["src/*"] 
+    }
   },
   "include": ["src"]
 }

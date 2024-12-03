@@ -1,5 +1,5 @@
 import { createTheme, Theme } from "@mui/material"
-import '@fontsource/outfit';
+import '@fontsource/outfit/400.css';
 import NexaLight from '../assets/fonts/NexaLight.ttf';
 import NexaBold from '../assets/fonts/NexaBold.ttf';
 
@@ -21,8 +21,8 @@ const lemon = '#c7f35e'
 
 // border radii
 const radiusSm = "30px"
-const radiusMd = "70px"
-const radiusLg = "400px"
+// const radiusMd = "70px"
+// const radiusLg = "400px"
 
 let theme: Theme = createTheme({
     palette: {
@@ -48,6 +48,23 @@ let theme: Theme = createTheme({
         }
     },
     components: {
+        MuiAppBar: {
+            styleOverrides: {
+                root: {
+                    backgroundColor: accentLight,
+                    color: accentDark,
+                    boxShadow: "none",
+                    borderBottom: '1px solid rgba(0, 0, 0, 0.12)'
+                },
+            },
+        },
+        MuiToolbar: {
+            styleOverrides: {
+                root: {
+                    boxShadow: 'none !important',
+                },
+            },
+        },
         MuiCssBaseline: {
             styleOverrides: `
                 @font-face {
@@ -71,7 +88,7 @@ let theme: Theme = createTheme({
                     width: "fit-content",
                     minWidth: "130px",
                     paddingInline: "15px",
-                    fontFamily: "NexaBold"
+                    fontFamily: "NexaBold",
                 },
                 containedPrimary: {
                     backgroundColor: yellow500,
@@ -82,6 +99,20 @@ let theme: Theme = createTheme({
                     color: accentLight
                 },
             },
+        },
+        MuiButtonBase: {
+            styleOverrides: {
+                root: {
+                    backgroundColor: yellow500,
+                }
+            }
+        },
+        MuiAvatar: {
+            styleOverrides: {
+                root: {
+                    backgroundColor: green500
+                }
+            }
         },
         MuiCard: {
             styleOverrides: {
@@ -108,23 +139,31 @@ let theme: Theme = createTheme({
                 }
             }
         },
-        MuiOutlinedInput:{
-            styleOverrides:{
-                root:{
+        MuiOutlinedInput: {
+            styleOverrides: {
+                root: {
                     borderRadius: radiusSm,
+                    backgroundColor: accentLight
+                }
+            }
+        },
+        MuiAlert: {
+            styleOverrides: {
+                root: {
+                    fontFamily: 'Outfit'
                 }
             }
         }
     },
     typography: {
-        fontFamily: 'NexaLight, Outfit, NexaBold',
+        fontFamily: 'NexaBold, NexaLight, Outfit',
         h2: {
             fontFamily: 'NexaBold',
             color: green500
         },
         h3: {
             fontFamily: 'NexaBold',
-            fontSize:"clamp(30px, 1.5rem + 2vw, 50px)"
+            fontSize: "clamp(30px, 1.5rem + 2vw, 50px)"
         },
         h4: {
             fontFamily: 'NexaBold',

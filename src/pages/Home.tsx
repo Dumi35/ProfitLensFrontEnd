@@ -2,12 +2,12 @@ import { Stack, Typography, Button, Box, Card, CardContent } from "@mui/material
 // import StarIcon from "../assets/icons/ph_star-four-fill.svg"
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import { useTheme } from "@mui/material/styles";
-import heartIcon from "../assets/icons/solar_heart-broken.svg"
-import appsIcon from "../assets/icons/apps.svg"
-import graph from "../assets/images/graph.svg"
-import logo from "../assets/images/logo.png"
-import brandmarkLogo from "../assets/images/brandmarkLogo.png"
-import AuthenticationForms from "../components/auth/AuthenticationForms";
+import heartIcon from "@profitlens/assets/icons/solar_heart-broken.svg"
+import appsIcon from "@profitlens/assets/icons/apps.svg"
+import graph from "@profitlens/assets/images/graph.svg"
+import logo from "@profitlens/assets/images/logo.png"
+import brandmarkLogo from "@profitlens/assets/images/brandmarkLogo.png"
+import AuthenticationForms from "@profitlens/components/auth/AuthenticationForms";
 import { useState } from "react";
 
 export default function HomePage() {
