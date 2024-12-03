@@ -2,8 +2,10 @@ import { Box, IconButton, InputAdornment, LinearProgress, Paper, Stack, TextFiel
 import { BarChart } from "@mui/x-charts";
 import UserDrawer, { DRAWERWIDTH } from "@profitlens/components/user/drawer";
 import { PromptAISetup, LanguageModel } from "@profitlens/utilities/AIPrompt.ts";
+import { Writer, WriterAISetup } from "@profitlens/utilities/AIWriter";
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from 'react-markdown';
+import AddIcon from '@mui/icons-material/Add';
 
 interface Message {
     id: string;
@@ -28,6 +30,8 @@ export default function Dashboard() {
     const [loadingResponse, setLoadingResponse] = useState(false)
 
     const PromptSession = useRef<LanguageModel | undefined>();
+    const AIWriter = useRef<Writer | undefined>();
+
     const [errorMessage, setErrorMessage] = useState<string>()
 
     async function promptAI(event: React.FormEvent<HTMLFormElement>) {
@@ -65,13 +69,17 @@ export default function Dashboard() {
             console.error(e)
             setErrorMessage('PromptAPI is unavailable. Please try again later')
             // console.log('error number of tokens', PromptSession)
-        } finally{
-            setLoadingResponse(false) //may place in a finally stmt
+        } finally {
+            setLoadingResponse(false)
         }
     }
 
     useEffect(() => {
-
+        WriterAISetup().then(async (res) => {
+            AIWriter.current = res
+        }).catch((e) => {
+            console.error(e)
+        })
         PromptAISetup().then(async (res: LanguageModel) => {
             console.log('setup res', res)
             PromptSession.current = res;
@@ -201,8 +209,7 @@ export default function Dashboard() {
                     placeholder="Enter prompt" fullWidth sx={{
 
                         '& .MuiInputBase-root': {
-                            paddingRight: 1,
-                            paddingLeft: 3
+                            paddingInline: 1,
                         }
                     }}
 
@@ -210,6 +217,12 @@ export default function Dashboard() {
                     maxRows={3}
                     slotProps={{
                         input: {
+                            startAdornment:
+                                <InputAdornment position="end">
+                                    <IconButton disabled={loadingResponse || errorMessage != null} sx={{ background: 'none' }}>
+                                        <AddIcon color="primary" />
+                                    </IconButton>
+                                </InputAdornment>,
                             endAdornment:
                                 <InputAdornment position="end">
                                     <IconButton type="submit" disabled={loadingResponse || errorMessage != null}>

@@ -1,4 +1,5 @@
 import { SummarizerFactory } from "./AISummarise";
+import { WriterFactory } from "./AIWriter";
 
 interface LanguageModelFactory {
     create(options?: { monitor?: (m: any) => void, systemPrompt?: string }): Promise<LanguageModel>;
@@ -12,6 +13,7 @@ export interface LanguageModel {
 interface ChromeAIOriginTrial {
     languageModel: LanguageModelFactory;
     summarizer: SummarizerFactory;
+    writer: WriterFactory
 }
 
 declare global {
