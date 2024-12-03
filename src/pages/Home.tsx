@@ -9,20 +9,26 @@ import logo from "@profitlens/assets/images/logo.png"
 import brandmarkLogo from "@profitlens/assets/images/brandmarkLogo.png"
 import AuthenticationForms from "@profitlens/components/auth/AuthenticationForms";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function HomePage() {
     const theme = useTheme()
     const [openAuthForm, setOpenAuthForm] = useState(false)
     const [formToOpen, setFormToOpen] = useState(0)
-   
+    const navigate = useNavigate()
+
     const handleCloseAuthForm = () => setOpenAuthForm(false);
 
 
     const handleOpenAuthForm = (formType: number) => {
-        setFormToOpen(formType); 
+        setFormToOpen(formType);
         setOpenAuthForm(true); // Open the dialog
     };
-    
+
+    const navigateToDashboard = (_: React.MouseEvent) => {
+        navigate('dashboard')
+    }
+
     return (
         <>
             <Box component="header" paddingBlock="1vh">
@@ -47,7 +53,7 @@ export default function HomePage() {
                     <Typography variant="body1">
                         Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum totam sunt vel laudantium nobis velit, aut ducimus esse ea deleniti consequatur quibusdam consectetur modi atque quasi nemo tenetur quia aliquid.
                     </Typography>
-                    <Button variant="contained"  onClick={() => handleOpenAuthForm(0)}>
+                    <Button variant="contained" onClick={navigateToDashboard}>
                         Get started
                     </Button>
                 </Stack>
