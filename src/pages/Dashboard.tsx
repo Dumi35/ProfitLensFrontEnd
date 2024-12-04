@@ -6,6 +6,7 @@ import { Writer, WriterAISetup } from "@profitlens/utilities/AIWriter";
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from 'react-markdown';
 import AddIcon from '@mui/icons-material/Add';
+import FeaturesFormDialog from "@profitlens/components/user/dashboard/FeaturesForm";
 
 interface Message {
     id: string;
@@ -33,6 +34,24 @@ export default function Dashboard() {
     const AIWriter = useRef<Writer | undefined>();
 
     const [errorMessage, setErrorMessage] = useState<string>()
+
+    // constants related to the features form
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [responseData, setResponseData] = useState(null);
+
+    const handleOpenDialog = () => {
+        setDialogOpen(true);
+    };
+
+    const handleCloseDialog = () => {
+        setDialogOpen(false);
+    };
+
+    const handleDialogSubmit = (response: any) => {
+        console.log('Response received from dialog:', response);
+        setResponseData(response); // Save the response in the state
+        console.log('features res', responseData)
+    };
 
     async function promptAI(event: React.FormEvent<HTMLFormElement>) {
         try {
@@ -187,6 +206,11 @@ export default function Dashboard() {
                     errorMessage &&
                     <Alert severity="error">{errorMessage}</Alert>
                 }
+                <FeaturesFormDialog
+                    open={dialogOpen}
+                    onClose={handleCloseDialog}
+                    onSubmit={handleDialogSubmit}
+                />
                 <Toolbar />
             </Stack>
 
@@ -220,7 +244,7 @@ export default function Dashboard() {
                             startAdornment:
                                 <InputAdornment position="end">
                                     <IconButton disabled={loadingResponse || errorMessage != null} sx={{ background: 'none' }}>
-                                        <AddIcon color="primary" />
+                                        <AddIcon color="primary" onClick={handleOpenDialog} />
                                     </IconButton>
                                 </InputAdornment>,
                             endAdornment:
