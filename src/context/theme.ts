@@ -153,6 +153,13 @@ let theme: Theme = createTheme({
                     fontFamily: 'Outfit'
                 }
             }
+        },
+        MuiMenuItem:{
+            styleOverrides:{
+                root:{
+                    backgroundColor:accentLight,
+                }
+            }
         }
     },
     typography: {

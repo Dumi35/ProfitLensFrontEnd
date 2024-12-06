@@ -1,4 +1,4 @@
-import { Stack, Typography, Button, Box, Card, CardContent } from "@mui/material";
+import { Stack, Typography, Button, Box, Card, CardContent, FormControl, Select, MenuItem } from "@mui/material";
 // import StarIcon from "../assets/icons/ph_star-four-fill.svg"
 import AutoAwesomeRoundedIcon from '@mui/icons-material/AutoAwesomeRounded';
 import { useTheme } from "@mui/material/styles";
@@ -10,6 +10,7 @@ import brandmarkLogo from "@profitlens/assets/images/brandmarkLogo.png"
 import AuthenticationForms from "@profitlens/components/auth/AuthenticationForms";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function HomePage() {
     const theme = useTheme()
@@ -29,19 +30,42 @@ export default function HomePage() {
         navigate('dashboard')
     }
 
+    const { t, i18n } = useTranslation();
+    const [language, setLanguage] = useState('');
+    const handleChange = (event: any) => {
+        setLanguage(event.target.value);
+        console.log(event.target.value)
+        i18n.changeLanguage(event.target.value)
+    };
+
     return (
         <>
             <Box component="header" paddingBlock="1vh">
+
                 <Stack component="nav" direction="row" justifyContent={"space-between"} alignItems={"center"}>
                     <Box component={"img"} src={logo} width="250px" loading="eager" display={{ xs: "none", md: "block" }} />
                     <Box component={"img"} src={brandmarkLogo} loading="eager" display={{ xs: "block", md: "none" }} />
-                    <Stack direction={"row"} gap={1}>
+                    <Stack direction={"row"} gap={1} alignItems={'center'}>
                         <Button variant="contained" onClick={() => handleOpenAuthForm(0)}>
                             Login
                         </Button>
                         <Button sx={{ display: { xs: "none", md: "block" } }} onClick={() => handleOpenAuthForm(1)} >
                             Sign up
                         </Button>
+                        <FormControl sx={{ m: 1, minWidth: 120 }}>
+                            <Select
+                                value={language}
+                                onChange={handleChange}
+                                displayEmpty
+                            >
+                                <MenuItem value="" disabled>
+                                    <em>Language</em>
+                                </MenuItem>
+                                <MenuItem value={'en'}>English</MenuItem>
+                                <MenuItem value={'es'}>Espanol</MenuItem>
+                                <MenuItem value={'fr'}>Francais</MenuItem>
+                            </Select>
+                        </FormControl>
                     </Stack>
                 </Stack>
             </Box>
@@ -49,7 +73,7 @@ export default function HomePage() {
             <Stack direction="row" flexWrap="wrap" justifyContent={"center"} gap="1.5rem" component={"section"} paddingBlock="2vh" alignItems={"center"}>
                 {/* hero text */}
                 <Stack flexBasis="500px" flexGrow={1} spacing="1rem">
-                    <Typography variant="h2">Gain insights into market with AI</Typography>
+                    <Typography variant="h2">{t('Gain insights into market with AI')}</Typography>
                     <Typography variant="body1">
                         Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum totam sunt vel laudantium nobis velit, aut ducimus esse ea deleniti consequatur quibusdam consectetur modi atque quasi nemo tenetur quia aliquid.
                     </Typography>
@@ -87,7 +111,7 @@ export default function HomePage() {
                             <Box component={"img"} src={heartIcon} bgcolor={"background.default"} borderRadius="50%" padding="9px" width="48px" height="48px" />
 
                             <Typography gutterBottom variant="subtitle1" component="div">
-                                Analyse
+                                {t("Analyse")}
                             </Typography>
                             <Typography variant="body1">
                                 KPIs, GDPs, and other economic indicators
@@ -100,7 +124,7 @@ export default function HomePage() {
                             <Box component={"img"} src={heartIcon} bgcolor={"background.default"} borderRadius="50%" padding="9px" width="48px" height="48px" />
 
                             <Typography gutterBottom variant="subtitle1" component="div">
-                                Advise
+                                {t("Advise")}
                             </Typography>
                             <Typography variant="body1">
                                 KPIs, GDPs, and other economic indicators
@@ -113,7 +137,7 @@ export default function HomePage() {
                             <Box component={"img"} src={heartIcon} bgcolor={"background.default"} borderRadius="50%" padding="9px" width="48px" height="48px" />
 
                             <Typography gutterBottom variant="subtitle1" component="div">
-                                Summarise
+                                {t("Summarise")}
                             </Typography>
                             <Typography variant="body1">
                                 KPIs, GDPs, and other economic indicators
