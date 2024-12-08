@@ -17,7 +17,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import logo from "@profitlens/assets/images/logo.png"
 import HelpIcon from "@mui/icons-material/HelpOutlineOutlined"
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation} from 'react-router-dom';
 import { startRegistration, platformAuthenticatorIsAvailable } from '@simplewebauthn/browser';
 // import useAuth from '../context/authContext';
 import { SERVER_URL } from '@profitlens/config';
