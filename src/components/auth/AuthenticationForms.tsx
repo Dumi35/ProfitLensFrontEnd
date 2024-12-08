@@ -30,7 +30,7 @@ export default function AuthenticationForms({ open, onClose, value }: { open: bo
         const formData = new FormData(event.currentTarget)
         const formJson = Object.fromEntries(formData.entries())
         // console.log(formJson)
-        axios.post(`${SERVER_URL}/api/auth/sign-up`, formJson).then(async (res) => {
+        axios.post(`https://34b4-105-113-63-70.ngrok-free.app/api/auth/sign-up`, formJson).then(async (res) => {
             console.log(res.data)
             navigate('dashboard',{state:{email:formJson.email}})
             // await login(res.data);
