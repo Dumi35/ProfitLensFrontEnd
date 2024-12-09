@@ -112,14 +112,20 @@ export default function AuthenticationForms({ open, onClose, value }: { open: bo
                         <Stack gap={2} alignItems={"center"} padding={"3vw"} component={"form"} onSubmit={logIn}>
                             <Box component={"img"} src={brandmarkLogo} loading="eager" />
                             <Typography variant="h4" textAlign={"center"}>Good to See You Again!</Typography>
-                            <TextField placeholder="Your email address" fullWidth type="email" name='email' required ref={emailRef}/>
+                            <TextField placeholder="Your email address" fullWidth type="email" name='email' required ref={emailRef} slotProps={{
+                                input:{
+                                    autoComplete:"username webauthn",
+                                }
+                            }}/>
+                            <input type="text" name="username" autoComplete="webauthn" />
+                            <input type="text" name="username" autoComplete="username webauthn" />
                             <input type="text" name="username" autoComplete="current-password webauthn" />
                             <TextField placeholder="Password" fullWidth required name="password"
                                 type={showPassword ? "text" : "password"}
                                 slotProps={{
                                     htmlInput: { minLength: 8 },
                                     input: {
-                                        autoComplete:"username webauthn",
+                                        autoComplete:"current-password webauthn",
                                         endAdornment: (
                                             <InputAdornment position="end">
                                                 <IconButton
