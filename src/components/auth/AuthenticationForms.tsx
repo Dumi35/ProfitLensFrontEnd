@@ -1,13 +1,60 @@
 import { Dialog, DialogContent, Box, Stack, TextField, Typography, Button, InputAdornment, IconButton } from "@mui/material";
 import brandmarkLogo from "../../assets/images/brandmarkLogo.png"
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { SERVER_URL } from "@profitlens/config";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { startAuthentication } from "@simplewebauthn/browser";
 // import useAuth from "@profitlens/context/authContext";
 
+const authenticatePasskey = async (_:any, email: string) => {
+// const authenticatePasskey = async () => {
+    // refer to https://simplewebauthn.dev/docs/packages/browser
+   
+    let asseResp;
+
+    axios.post(`${SERVER_URL}/api/webauth/authenticate`,{email}).then(async (res) => {
+        const optionsJSON = res.data
+        console.log('generate reg options JSON', optionsJSON)
+        try {
+            // Pass the options to the authenticator and wait for a response
+            asseResp = await startAuthentication({ optionsJSON, useBrowserAutofill: true });
+            console.log('attResp',asseResp)
+
+            axios.post(`${SERVER_URL}/api/webauth/verify-authentication`, asseResp ).then(async (res) => {
+                const verificationJSON = res.data;
+                console.log('verification reg options JSON', verificationJSON)
+                // Show UI appropriate for the `verified` status
+                if (verificationJSON && verificationJSON.verified) {
+                    alert('Success')
+                } else {
+                    console.log(`Oh no, something went wrong! Response: ${JSON.stringify(
+                        verificationJSON)
+                    })`)
+                  
+                }
+        
+            })
+
+        } catch (error: any) {
+            // Some basic error handling
+            if (error.name === 'InvalidStateError') {
+                console.warn('Error: Authenticator was probably already registered by user')
+            } else {
+                console.warn('other', error)
+            }
+
+            throw error;
+        }
+
+    })
+
+    // POST the response to the endpoint that calls
+    // @simplewebauthn/server -> verifyRegistrationResponse()   
+
+}
 
 export default function AuthenticationForms({ open, onClose, value }: { open: boolean; onClose: () => void; value: number }) {
     const [formValue, setFormValue] = useState(value);
@@ -30,7 +77,7 @@ export default function AuthenticationForms({ open, onClose, value }: { open: bo
         const formData = new FormData(event.currentTarget)
         const formJson = Object.fromEntries(formData.entries())
         // console.log(formJson)
-        axios.post(`https://34b4-105-113-63-70.ngrok-free.app/api/auth/sign-up`, formJson).then(async (res) => {
+        axios.post(`${SERVER_URL}/api/auth/sign-up`, formJson).then(async (res) => {
             console.log(res.data)
             navigate('dashboard',{state:{email:formJson.email}})
             // await login(res.data);
@@ -53,6 +100,8 @@ export default function AuthenticationForms({ open, onClose, value }: { open: bo
         })
     }
 
+    const emailRef = useRef<HTMLInputElement | null>(null);
+
     return (
         <Dialog open={open} onClose={onClose}>
             <DialogContent>
@@ -63,13 +112,14 @@ export default function AuthenticationForms({ open, onClose, value }: { open: bo
                         <Stack gap={2} alignItems={"center"} padding={"3vw"} component={"form"} onSubmit={logIn}>
                             <Box component={"img"} src={brandmarkLogo} loading="eager" />
                             <Typography variant="h4" textAlign={"center"}>Good to See You Again!</Typography>
-                            <TextField placeholder="Your email address" fullWidth type="email" name='email' required />
+                            <TextField placeholder="Your email address" fullWidth type="email" name='email' required ref={emailRef}/>
+                            <input type="text" name="username" autoComplete="current-password webauthn" />
                             <TextField placeholder="Password" fullWidth required name="password"
                                 type={showPassword ? "text" : "password"}
                                 slotProps={{
                                     htmlInput: { minLength: 8 },
                                     input: {
-
+                                        autoComplete:"username webauthn",
                                         endAdornment: (
                                             <InputAdornment position="end">
                                                 <IconButton
@@ -93,6 +143,7 @@ export default function AuthenticationForms({ open, onClose, value }: { open: bo
                                 </span>
                             </Typography>
                             <Button variant="contained" type='submit'>Log in</Button>
+                            <Button variant="contained" onClick={(event)=>{authenticatePasskey(event,emailRef.current?.value??'hi')}}>Log in with Passkey</Button>
                         </Stack>
                     </>
                 }

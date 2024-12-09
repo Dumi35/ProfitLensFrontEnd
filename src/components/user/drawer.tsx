@@ -20,7 +20,7 @@ import HelpIcon from "@mui/icons-material/HelpOutlineOutlined"
 import { Outlet, useLocation} from 'react-router-dom';
 import { startRegistration, platformAuthenticatorIsAvailable } from '@simplewebauthn/browser';
 // import useAuth from '../context/authContext';
-// import { SERVER_URL } from '@profitlens/config';
+import { SERVER_URL } from '@profitlens/config';
 import axios from 'axios';
 import { useRef } from 'react';
 
@@ -37,14 +37,14 @@ const registerPasskey = async (email: string) => {
      */
 
     let attResp;
-    axios.post(`https://34b4-105-113-63-70.ngrok-free.app/api/webauth/generate-registration-options`, { email }).then(async (res) => {
+    axios.post(`${SERVER_URL}/api/webauth/generate-registration-options`, { email }).then(async (res) => {
         const optionsJSON = res.data
         console.log('generate reg options JSON', optionsJSON)
         try {
             // Pass the options to the authenticator and wait for a response
             attResp = await startRegistration({ optionsJSON });
             console.log('attResp',attResp)
-            axios.post(`https://34b4-105-113-63-70.ngrok-free.app/api/webauth/verify-registration-options`, attResp ).then(async (res) => {
+            axios.post(`${SERVER_URL}/api/webauth/verify-registration-options`, attResp ).then(async (res) => {
                 const verificationJSON = res.data;
                 console.log('verification reg options JSON', verificationJSON)
                 // Show UI appropriate for the `verified` status
