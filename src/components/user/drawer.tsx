@@ -17,7 +17,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import logo from "@profitlens/assets/images/logo.png"
 import HelpIcon from "@mui/icons-material/HelpOutlineOutlined"
-import { Outlet, useLocation} from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { startRegistration, platformAuthenticatorIsAvailable } from '@simplewebauthn/browser';
 // import useAuth from '../context/authContext';
 import { SERVER_URL } from '@profitlens/config';
@@ -90,8 +90,8 @@ export default function UserDrawer() {
     // const navigate = useNavigate();
 
     //   const { logout } = useAuth();
-    const location = useLocation()
-    const email = useRef(location.state.email)
+    // const location = useLocation()
+    const email = useRef("janedoe@gmail.com")
     const handleDrawerClose = () => {
         setIsClosing(true);
         setMobileOpen(false);

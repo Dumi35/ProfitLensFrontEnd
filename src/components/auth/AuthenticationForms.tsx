@@ -12,7 +12,7 @@ import { startAuthentication } from "@simplewebauthn/browser";
 const authenticatePasskey = async (_:any, email: string) => {
 // const authenticatePasskey = async () => {
     // refer to https://simplewebauthn.dev/docs/packages/browser
-   
+  
     let asseResp;
 
     axios.post(`${SERVER_URL}/api/webauth/authenticate`,{email}).then(async (res) => {
@@ -20,14 +20,15 @@ const authenticatePasskey = async (_:any, email: string) => {
         console.log('generate reg options JSON', optionsJSON)
         try {
             // Pass the options to the authenticator and wait for a response
-            asseResp = await startAuthentication({ optionsJSON, useBrowserAutofill: true });
-            console.log('attResp',asseResp)
+            asseResp = await startAuthentication({ optionsJSON});
+            console.log('asseResp',asseResp)
 
             axios.post(`${SERVER_URL}/api/webauth/verify-authentication`, asseResp ).then(async (res) => {
                 const verificationJSON = res.data;
+                console.log(verificationJSON)
                 console.log('verification reg options JSON', verificationJSON)
                 // Show UI appropriate for the `verified` status
-                if (verificationJSON && verificationJSON.verified) {
+                if (verificationJSON && verificationJSON.access_token) {
                     alert('Success')
                 } else {
                     console.log(`Oh no, something went wrong! Response: ${JSON.stringify(
@@ -65,6 +66,7 @@ export default function AuthenticationForms({ open, onClose, value }: { open: bo
 
     useEffect(() => {
         setFormValue(value);
+        console.log('email',emailRef.current)
     }, [value]);
 
     const [showPassword, setShowPassword] = useState(false);
@@ -101,6 +103,7 @@ export default function AuthenticationForms({ open, onClose, value }: { open: bo
     }
 
     const emailRef = useRef<HTMLInputElement | null>(null);
+    const [email,setEmail]=useState('')
 
     return (
         <Dialog open={open} onClose={onClose}>
@@ -116,10 +119,10 @@ export default function AuthenticationForms({ open, onClose, value }: { open: bo
                                 input:{
                                     autoComplete:"username webauthn",
                                 }
-                            }}/>
-                            <input type="text" name="username" autoComplete="webauthn" />
+                            }} value={email} onChange={(event)=>{setEmail(event.target.value)}}/>
+                            {/* <input type="text" name="username" autoComplete="webauthn" />
                             <input type="text" name="username" autoComplete="username webauthn" />
-                            <input type="text" name="username" autoComplete="current-password webauthn" />
+                            <input type="text" name="username" autoComplete="current-password webauthn" /> */}
                             <TextField placeholder="Password" fullWidth required name="password"
                                 type={showPassword ? "text" : "password"}
                                 slotProps={{
@@ -149,7 +152,7 @@ export default function AuthenticationForms({ open, onClose, value }: { open: bo
                                 </span>
                             </Typography>
                             <Button variant="contained" type='submit'>Log in</Button>
-                            <Button variant="contained" onClick={(event)=>{authenticatePasskey(event,emailRef.current?.value??'hi')}}>Log in with Passkey</Button>
+                            <Button variant="contained" onClick={(event)=>{authenticatePasskey(event,email)}}>Log in with Passkey</Button>
                         </Stack>
                     </>
                 }
